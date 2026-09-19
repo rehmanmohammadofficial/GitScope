@@ -190,12 +190,12 @@ export default function ArchGraph({ repoName, modules, flow, selectedId, onSelec
         }
         ctx.textAlign = "center"; ctx.textBaseline = "middle";
         if (n.kind === "root") {
-          ctx.fillStyle = "#FFE7BE"; ctx.font = "700 11px 'Bricolage Grotesque', system-ui, sans-serif";
+          ctx.fillStyle = "#FFE7BE"; ctx.font = "700 11px 'Plus Jakarta Sans', system-ui, sans-serif";
           ctx.fillText(String(n.label).slice(0, 9), n.x, n.y);
         } else {
           ctx.fillStyle = "#EAF6FF"; ctx.font = "600 12px 'JetBrains Mono', ui-monospace, monospace";
           ctx.fillText(String(n.count), n.x, n.y);
-          ctx.font = `${isHot || isSel ? 700 : 500} 13px 'Bricolage Grotesque', system-ui, sans-serif`;
+          ctx.font = `${isHot || isSel ? 700 : 500} 13px 'Plus Jakarta Sans', system-ui, sans-serif`;
           ctx.fillStyle = isHot || isSel ? "#FFFFFF" : "rgba(233,236,255,.86)";
           ctx.fillText(String(n.label).slice(0, 18), n.x, n.y + n.r + 16);
         }

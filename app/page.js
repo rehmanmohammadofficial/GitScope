@@ -45,15 +45,6 @@ function SkillPicker({ value, onChange, disabled }) {
   );
 }
 
-function StatusPills({ steps }) {
-  const items = [["repo", "Repo"], ["arch", "Map"], ["setup", "Setup"], ["issues", "Issues"]];
-  return (
-    <ul className="gs-pills" aria-label="Analysis progress">
-      {items.map(([k, label]) => <li key={k} className={`is-${steps[k].status}`}><i />{label}</li>)}
-    </ul>
-  );
-}
-
 function Nav({ steps }) {
   const [active, setActive] = useState("map");
   const listRef = useRef(null);
@@ -85,7 +76,6 @@ function Nav({ steps }) {
         {NAV.map(([id, label]) => <a key={id} data-id={id} href={`#${id}`} className={active === id ? "is-on" : ""}>{label}</a>)}
         <i className="gs-nav__bar" style={{ transform: `translateX(${bar.x}px)`, width: bar.w }} />
       </div>
-      <StatusPills steps={steps} />
     </nav>
   );
 }
@@ -186,7 +176,7 @@ export default function Home() {
 
       <main>
         <section className={`gs-hero ${started ? "gs-hero--compact" : ""}`}>
-          <ReactiveText className="gs-title" lines={["From an unfamiliar repo", "to your first pull request."]} />
+          <ReactiveText className="gs-title" compact={started} lines={["From an unfamiliar repo to your first pull request."]} />
           <div className="gs-hero__sub">
             <p>Paste a GitHub link. GitScope reads the real folders, configs and issues, then shows you what to open, what to run and what to fix first.</p>
           </div>

@@ -66,14 +66,35 @@ export function Magnetic({ strength = 0.32, radius = 80, className = "", childre
 }
 
 // Headline whose letters get heavier and lift as the cursor passes (variable font weight axis).
-export function ReactiveText({ lines, className = "" }) {
+export function ReactiveText({ lines, className = "", compact = false }) {
   const wrap = useRef(null);
   const letters = useRef([]);
+
+  // Keep the headline on one line: measure it at 100px, then scale to the space available.
+  useEffect(() => {
+    const h = wrap.current;
+    const fit = () => {
+      if (!h || !h.parentElement) return;
+      if (window.innerWidth <= 560) { h.style.fontSize = ""; return; }
+      const box = h.parentElement, cs = getComputedStyle(box);
+      const avail = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      h.style.fontSize = "100px";
+      const natural = (h.firstElementChild || h).getBoundingClientRect().width || 1;
+      const cap = compact ? 34 : 60;
+      h.style.fontSize = `${Math.max(20, Math.min(cap, (avail / natural) * 100 * 0.96)).toFixed(1)}px`;
+    };
+    fit();
+    window.addEventListener("resize", fit);
+    document.fonts?.ready.then(fit);
+    document.fonts?.addEventListener?.("loadingdone", fit);
+    return () => { window.removeEventListener("resize", fit); document.fonts?.removeEventListener?.("loadingdone", fit); };
+  }, [compact]);
+
   useEffect(() => {
     if (reducedMotion() || !fineHover()) return;
-    const items = letters.current.filter(Boolean).map((el) => ({ el, w: 420, lift: 0 }));
+    const items = letters.current.filter(Boolean).map((el) => ({ el, w: 600, lift: 0 }));
     let mx = -9999, my = -9999, raf = 0;
-    const BASE = 420, PEAK = 820, RAD = 210;
+    const BASE = 600, PEAK = 800, RAD = 210;
     const tick = () => {
       const reads = items.map((it) => { const r = it.el.getBoundingClientRect(); return { cx: r.left + r.width / 2, cy: r.top + r.height / 2 + it.lift }; });
       let busy = false;
