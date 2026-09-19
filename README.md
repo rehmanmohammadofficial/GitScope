@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# GitScope
 
-## Getting Started
+### From zero knowledge to your first contribution.
 
-First, run the development server:
+## 💡 What is GitScope?
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+GitScope is an AI-powered developer onboarding tool that helps beginners understand unfamiliar GitHub repositories.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+A user simply provides a repository URL, and GitScope analyzes the project to provide:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- 🗺️ Architecture Map — Understand the project's structure and how its components connect.
+- ⚙️ Setup Guide — Get step-by-step instructions to run the project locally.
+- 🎯 Smart Issue Finder — Find beginner-friendly issues based on the user's skill level and identify the relevant files.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🎯 Problem
 
-## Learn More
+Large open-source repositories can be overwhelming for beginners. They often don't know:
 
-To learn more about Next.js, take a look at the following resources:
+- Where important code is located
+- How to set up the project
+- Which issue they should start with
+- Which files are relevant to an issue
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This causes many potential contributors to give up before making their first contribution.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Solution
 
-## Deploy on Vercel
+GitScope acts like a map and onboarding guide for software projects.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+GitHub Repository
+       ↓
+Repository Analysis
+       ↓
+Architecture + Setup + Issues
+       ↓
+Personalized Contribution Roadmap
+       ↓
+First Contribution
