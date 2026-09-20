@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import "./gitscope.css";
 import PhysicsField from "../components/PhysicsField";
 import Reticle from "../components/Reticle";
@@ -10,6 +11,7 @@ import MapSection from "../components/MapSection";
 import SetupSection from "../components/SetupSection";
 import IssuesSection from "../components/IssuesSection";
 import PathSection from "../components/PathSection";
+import { logRepoAnalysis } from "../lib/history";
 
 const SKILLS = [
   { value: "beginner", label: "New to open source" },
@@ -75,6 +77,8 @@ function Nav({ steps }) {
       <div className="gs-nav__links" ref={listRef}>
         {NAV.map(([id, label]) => <a key={id} data-id={id} href={`#${id}`} className={active === id ? "is-on" : ""}>{label}</a>)}
         <i className="gs-nav__bar" style={{ transform: `translateX(${bar.x}px)`, width: bar.w }} />
+        <Link href="/discover" style={{ color: "#FFB240" }}>Discover</Link>
+        <Link href="/history" style={{ color: "#FFB240" }}>History</Link>
       </div>
     </nav>
   );
@@ -93,6 +97,7 @@ export default function Home() {
   const skillRef = useRef(skill);
   const resultsRef = useRef(null);
   const lastErr = useRef(null);
+  const autoRan = useRef(false);
   useEffect(() => { skillRef.current = skill; }, [skill]);
 
   const patch = useCallback((key, p) => setSteps((s) => ({ ...s, [key]: { ...s[key], ...p } })), []);
@@ -134,11 +139,33 @@ export default function Home() {
       return;
     }
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 250);
-    await runStep("arch", "architecture", { repoUrl }, id, controller.signal);
+    const arch = await runStep("arch", "architecture", { repoUrl }, id, controller.signal);
+    if (runId.current === id && arch) {
+      logRepoAnalysis({
+        owner: arch?.repo?.owner,
+        name: arch?.repo?.name,
+        url: arch?.repo?.url,
+        description: arch?.repo?.description,
+        skillLevel: level,
+        aiUsed: arch?.aiUsed,
+        moduleCount: arch?.modules?.length,
+        language: arch?.languages?.[0]?.name,
+      });
+    }
     await runStep("setup", "setup", { repoUrl }, id, controller.signal);
     await runStep("issues", "issues", { repoUrl, skillLevel: level }, id, controller.signal);
     if (runId.current === id) { setPhase("done"); setBurst((b) => b + 1); }
   }, [runStep]);
+
+  // Arriving from the Discover page: /?repo=owner%2Fname starts the scan straight away.
+  useEffect(() => {
+    if (autoRan.current) return;
+    autoRan.current = true;
+    const repo = new URLSearchParams(window.location.search).get("repo");
+    if (!repo) return;
+    window.history.replaceState(null, "", window.location.pathname);
+    analyze(repo, skillRef.current);
+  }, [analyze]);
 
   const retry = (key) => () => {
     const id = runId.current;
@@ -171,7 +198,13 @@ export default function Home() {
       <div className="gs-grid" aria-hidden="true" />
 
       {started ? <Nav steps={steps} /> : (
-        <header className="gs-top"><Wordmark /></header>
+        <header className="gs-top">
+          <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
+            <Wordmark />
+            <Link href="/discover" style={{ color: "#FFB240", fontWeight: 600, textDecoration: "none" }}>Discover</Link>
+            <Link href="/history" style={{ color: "#FFB240", fontWeight: 600, textDecoration: "none" }}>History</Link>
+          </div>
+        </header>
       )}
 
       <main>
@@ -202,6 +235,9 @@ export default function Home() {
                 {EXAMPLES.map((ex) => <button type="button" key={ex} onClick={() => { setInput(ex); analyze(ex, skill); }}>{ex}</button>)}
               </div>
             </div>
+            <p style={{ margin: "16px 0 0", color: "#9AA3D6", fontSize: 15 }}>
+              Not sure which repo to pick? <Link href="/discover" style={{ color: "#FFB240", fontWeight: 600, textDecoration: "none" }}>Browse projects that need contributors →</Link>
+            </p>
           </form>
         </section>
 
